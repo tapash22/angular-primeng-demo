@@ -1,0 +1,7 @@
+.chart-container {
+    position: relative;
+    width: 100%; /* Make the width responsive to its container */
+    max-width: 1000px; /* Set the maximum width */
+    height: 600px; /* Set a fixed height */
+    margin: auto; /* Center it if needed */
+  }
