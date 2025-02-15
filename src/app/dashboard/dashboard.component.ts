@@ -15,6 +15,8 @@ export class DashboardComponent implements AfterViewInit {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef;
   chart!: Chart;
 
+  hoveredIndex: number | null = null;
+
   // Initial data
   data = [
     { month: 'Jan', value: 100 },
@@ -26,7 +28,7 @@ export class DashboardComponent implements AfterViewInit {
   ];
 
   constructor() {
-    Chart.register(...registerables,this.backgroundColorPlugin, this.shadowEffect); 
+    Chart.register(...registerables,this.backgroundColorPlugin, this.shadowEffect, this.barGlowEffect); 
   }
 
   ngAfterViewInit() {
@@ -44,6 +46,19 @@ export class DashboardComponent implements AfterViewInit {
 
   initChart():void{
     const canvas = this.chartCanvas.nativeElement as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    // Create gradient for line
+    const lineGradient = ctx!.createLinearGradient(0, 0, 0, 400);
+    lineGradient.addColorStop(0, 'rgba(255, 99, 132, 1)');
+    lineGradient.addColorStop(1, 'rgba(54, 162, 235, 1)');
+
+    // Create gradient for bars
+   // Create a soft-glow gradient for bars
+   const barGradient = ctx!.createLinearGradient(0, 0, 0, 400);
+   barGradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)'); // Soft white glow
+   barGradient.addColorStop(0.5, 'rgba(173, 216, 230, 0.8)'); // Light blue
+   barGradient.addColorStop(1, 'rgba(135, 206, 250, 0.9)'); // Sky blue
 
     this.chart = new Chart(canvas, {
       type: 'line',
@@ -52,37 +67,24 @@ export class DashboardComponent implements AfterViewInit {
         datasets: [
           {
             data: this.data.map((d) => d.value),
-            borderColor: 'rgba(255, 99, 132, 1)',
+            borderColor: lineGradient,
             backgroundColor: 'rgba(0, 0, 0, 0)',
-            borderWidth: 5,
-            pointBackgroundColor: 'rgb(250, 8, 61)',
-            pointRadius: 5,
+            borderWidth: 4,
+            pointBackgroundColor: 'white',
+            pointBorderColor: '#ff4081',
+            pointRadius: 6,
             pointHoverRadius: 10,
-            pointHoverBackgroundColor: 'rgba(255, 0, 106, 0.72)',
-            pointHoverBorderWidth: 3,
             fill: false,
             tension: 0.4,
           },
           {
             data: new Array(this.data.length).fill(0), // Initially hidden
             type: 'bar',
-            backgroundColor: (context: any) => {
-              const canvas = context.chart.canvas;
-              const ctx = canvas.getContext('2d');
-              const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
-              gradient.addColorStop(0, 'rgba(255, 0, 0, 0.86)');
-              gradient.addColorStop(0.3, 'rgba(255, 166, 0, 0.61)');
-              gradient.addColorStop(0.6, 'rgba(0, 255, 0, 0.52)');
-              gradient.addColorStop(1, 'rgba(0, 0, 255, 0.29)');
-              return gradient;
-            },
-            borderRadius: 30,
-            barThickness: 100,
+            backgroundColor: barGradient,
+            borderRadius: 20,
+            barThickness: 60,
             animation: {
-              duration: (context: any) => {
-                // If the bar value is greater than 0, animate showing the bar
-                return context.dataset.data[context.dataIndex] > 0 ? 10000 : 400;
-              },
+              duration: (context: any) => context.active ? 1000 : 1000, 
               easing: 'easeOutQuad', // Easing function for smooth animations
             },
           },
@@ -95,45 +97,56 @@ export class DashboardComponent implements AfterViewInit {
 
   resetHoveredBar(): void {
     if (!this.chart) return;
+    // this.hoveredIndex = null;
     this.chart.data.datasets[1].data = new Array(this.data.length).fill(0);
     this.chart.update();
   }
-
   backgroundColorPlugin: Plugin = {
     id: 'customCanvasBackgroundColor',
-    beforeDraw: (chart: any) => {
+    beforeDraw: (chart) => {
       const { ctx, chartArea } = chart;
       if (!chartArea) return;
   
-      // Create a light glass/crystal gradient
+      const currentTime = performance.now();
+      const waveSpeed = 4000; // Adjust for speed
+      const waveHeight = 0.4; // Reduce height slightly to prevent overflow
+  
+      let step = (currentTime % waveSpeed) / waveSpeed;
+      let wavePosition = 1 - step; // Moves wave from bottom (1) to top (0)
+  
+      // Ensure values remain within [0,1]
+      const stop1 = Math.max(0, Math.min(1, wavePosition - waveHeight * 0.5));
+      const stop2 = Math.max(0, Math.min(1, wavePosition + waveHeight * 0.5));
+  
+      // Create the gradient from bottom to top
       const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-  
-      let step = (performance.now() % 3000) / 3000; // Smooth color animation
       gradient.addColorStop(0, `rgba(255, 255, 255, 0.8)`); // White top
-      gradient.addColorStop(0.3, `rgba(200, 225, 255, ${0.5 + 0.3 * Math.sin(step * Math.PI)})`); // Light blue reflection
-      gradient.addColorStop(0.7, `rgba(180, 210, 255, ${0.4 + 0.4 * Math.cos(step * Math.PI)})`); // Soft cool blue
-      gradient.addColorStop(1, `rgba(220, 240, 255, 0.7)`); // Whiteish bottom
+      gradient.addColorStop(stop1, `rgba(200, 225, 255, ${0.5 + 0.3 * Math.cos(step * Math.PI)})`); // Smooth highlight
+      gradient.addColorStop(stop2, `rgba(180, 210, 255, ${0.5 + 0.3 * Math.sin(step * Math.PI)})`); // Wave effect
+      gradient.addColorStop(1, `rgba(11, 46, 241, 0.200)`); // Deep blue bottom
   
-      // Apply a soft blur for frosted glass effect
       ctx.save();
-      ctx.filter = 'blur(6px)'; // Frosted effect
+      ctx.filter = 'blur(8px)'; // Frosted effect
       ctx.fillStyle = gradient;
       ctx.fillRect(chartArea.left, chartArea.top, chartArea.width, chartArea.height);
       ctx.restore();
   
-      // Add subtle crystal-like reflections
+      // Moving reflection effect
       ctx.save();
       ctx.globalAlpha = 0.3;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Light reflection
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
       ctx.beginPath();
-      ctx.ellipse(chartArea.left + chartArea.width * 0.5, chartArea.top + chartArea.height * 0.2, chartArea.width * 0.3, 30, 0, 0, Math.PI * 2);
+      const reflectionY = chartArea.top + chartArea.height * wavePosition;
+      //ctx.ellipse(chartArea.left + chartArea.width * 0.5, reflectionY, chartArea.width * 0.3, 30, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
   
-      // Request animation frame for smooth effect
       requestAnimationFrame(() => chart.update('none'));
     }
   };
+  
+  
+  
   
    shadowEffect: Plugin = {
     id: '3dEffect',
@@ -164,13 +177,13 @@ export class DashboardComponent implements AfterViewInit {
       },
       scales: {
         x: {
-          ticks: { font: { size: 14 }, color: 'black' },
-          grid: { display: false },
+          ticks: { font: { size: 18 }, color: 'white' },
+          grid: { display: true, color: 'rgba(200, 200, 200, 0.3)' },
         },
         y: {
           beginAtZero: true,
-          ticks: { font: { size: 14 }, color: 'black' },
-          grid: { display: false },
+          ticks: { font: { size: 18 }, color: '#fff' },
+          grid: { display: true, color: 'rgba(221, 216, 216, 0.38)' },
         },
       },
       animation: {
@@ -181,18 +194,41 @@ export class DashboardComponent implements AfterViewInit {
     };
   }
 
+    // 🔵 Glow Effect for Bars
+    barGlowEffect: Plugin = {
+      id: 'barGlow',
+      beforeDatasetsDraw: (chart) => {
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.shadowColor = 'rgba(173, 216, 230, 0.7)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetX = 3;
+        ctx.shadowOffsetY = 3;
+        ctx.restore();
+      }
+    };
+
   onHover(event: any, elements: any[]): void {
     if (elements.length) {
       const index = elements[0].index;
-      const targetData = this.chart.data.datasets[0].data[index];
-    
-      // Update the dataset to show the selected bar
+    // If already hovered, don't repeat animation
+    if (this.hoveredIndex === index) return;
+    this.hoveredIndex = index;
+
+    // Show only the hovered bar at 50% first
+    this.chart.data.datasets[1].data = this.chart.data.datasets[0].data.map((_, i) =>
+      i === index ? Number(this.chart.data.datasets[0].data[i]) * 1 : 0
+    );
+
+    this.chart.update('active');
+
+    // Delay to fully animate the bar after the first animation
+    setTimeout(() => {
       this.chart.data.datasets[1].data = this.chart.data.datasets[0].data.map((_, i) =>
-        i === index ? targetData : 0
+        i === index ? Number(this.chart.data.datasets[0].data[i]) : 0
       );
-  
-      // You can update the chart if necessary
-      // this.chart.update();
+      // this.chart.update('active');
+    }, 400);
     } else {
       this.resetHoveredBar();
     }
