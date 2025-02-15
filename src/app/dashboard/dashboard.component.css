@@ -3,5 +3,13 @@
     width: 100%; /* Make the width responsive to its container */
     max-width: 1000px; /* Set the maximum width */
     height: 600px; /* Set a fixed height */
-    margin: auto; /* Center it if needed */
+    margin: auto;
   }
+
+  canvas {
+    background: transparent;
+    transform: perspective(800px) rotateX(10deg);
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+  

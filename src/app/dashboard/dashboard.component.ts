@@ -26,7 +26,7 @@ export class DashboardComponent implements AfterViewInit {
   ];
 
   constructor() {
-    Chart.register(...registerables,this.backgroundColorPlugin); 
+    Chart.register(...registerables,this.backgroundColorPlugin, this.shadowEffect); 
   }
 
   ngAfterViewInit() {
@@ -78,22 +78,72 @@ export class DashboardComponent implements AfterViewInit {
             },
             borderRadius: 30,
             barThickness: 100,
+            animation: {
+              duration: (context: any) => {
+                // If the bar value is greater than 0, animate showing the bar
+                return context.dataset.data[context.dataIndex] > 0 ? 10000 : 400;
+              },
+              easing: 'easeOutQuad', // Easing function for smooth animations
+            },
           },
         ],
       },
       options: this.getChartOptions(),
     });
+    
+  }
+
+  resetHoveredBar(): void {
+    if (!this.chart) return;
+    this.chart.data.datasets[1].data = new Array(this.data.length).fill(0);
+    this.chart.update();
   }
 
   backgroundColorPlugin: Plugin = {
     id: 'customCanvasBackgroundColor',
-    beforeDraw: (chart:any) => {
+    beforeDraw: (chart: any) => {
       const { ctx, chartArea } = chart;
+      if (!chartArea) return;
+  
+      // Create a light glass/crystal gradient
+      const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  
+      let step = (performance.now() % 3000) / 3000; // Smooth color animation
+      gradient.addColorStop(0, `rgba(255, 255, 255, 0.8)`); // White top
+      gradient.addColorStop(0.3, `rgba(200, 225, 255, ${0.5 + 0.3 * Math.sin(step * Math.PI)})`); // Light blue reflection
+      gradient.addColorStop(0.7, `rgba(180, 210, 255, ${0.4 + 0.4 * Math.cos(step * Math.PI)})`); // Soft cool blue
+      gradient.addColorStop(1, `rgba(220, 240, 255, 0.7)`); // Whiteish bottom
+  
+      // Apply a soft blur for frosted glass effect
       ctx.save();
-      ctx.fillStyle = 'lightgreen'; 
+      ctx.filter = 'blur(6px)'; // Frosted effect
+      ctx.fillStyle = gradient;
       ctx.fillRect(chartArea.left, chartArea.top, chartArea.width, chartArea.height);
       ctx.restore();
+  
+      // Add subtle crystal-like reflections
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Light reflection
+      ctx.beginPath();
+      ctx.ellipse(chartArea.left + chartArea.width * 0.5, chartArea.top + chartArea.height * 0.2, chartArea.width * 0.3, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+  
+      // Request animation frame for smooth effect
+      requestAnimationFrame(() => chart.update('none'));
     }
+  };
+  
+   shadowEffect: Plugin = {
+    id: '3dEffect',
+    beforeDraw: (chart) => {
+      const { ctx, chartArea } = chart;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 4;
+      ctx.shadowOffsetY = 4;
+    },
   };
 
   getChartOptions(): ChartOptions {
@@ -123,29 +173,31 @@ export class DashboardComponent implements AfterViewInit {
           grid: { display: false },
         },
       },
+      animation: {
+        duration: 1000, // Duration of the animation
+        easing: 'easeOutQuad', // Easing function for smooth animations
+      },
       onHover: (event:any, elements:any) => this.onHover(event, elements),
     };
   }
 
-  onHover(event: any, elements: any[]): void  {
+  onHover(event: any, elements: any[]): void {
     if (elements.length) {
       const index = elements[0].index;
-    this.chart.data.datasets[1].data =
-      this.chart.data.datasets[0].data.map((_, i) =>
-        i === index ? (this.chart.data.datasets[0].data[i] as number) : 0
+      const targetData = this.chart.data.datasets[0].data[index];
+    
+      // Update the dataset to show the selected bar
+      this.chart.data.datasets[1].data = this.chart.data.datasets[0].data.map((_, i) =>
+        i === index ? targetData : 0
       );
+  
+      // You can update the chart if necessary
+      // this.chart.update();
     } else {
-      this.resetHoveredBar(); 
+      this.resetHoveredBar();
     }
-    this.chart.update();
   }
   
-
-  resetHoveredBar(): void {
-    if (!this.chart) return;
-    this.chart.data.datasets[1].data = new Array(this.data.length).fill(0);
-    this.chart.update();
-  }
   
   customTooltip(context: any): void {
     let tooltipEl = document.getElementById('chart-tooltip');
