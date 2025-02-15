@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 // import Chart from 'chart.js/auto';
 // import { Chart, ChartOptions } from 'chart.js';
-import { Chart, ChartConfiguration, ChartData, ChartOptions, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, ChartOptions, registerables } from 'chart.js';
 
 import { ShadowPluginService } from '../service/plugine/shadow-plugin.service';
 
@@ -26,15 +26,18 @@ export class DashboardComponent implements AfterViewInit {
   ];
 
   constructor() {
-    Chart.register(...registerables); // ✅ Register necessary Chart.js components
+    Chart.register(...registerables); 
   }
 
   ngAfterViewInit() {
     this.initChart();
     const canvas = this.chartCanvas.nativeElement as HTMLCanvasElement;
     canvas.addEventListener('mouseleave', () => {
-      this.chart.data.datasets[1].data = new Array(this.data.length).fill(0); // Reset bars
-      this.chart.update();
+      // call this method for reset
+      this.resetHoveredBar()
+      // also use this
+      // this.chart.data.datasets[1].data = new Array(this.data.length).fill(0); 
+      // this.chart.update();
     });
     
   }
@@ -94,62 +97,8 @@ export class DashboardComponent implements AfterViewInit {
           display: false,
         },
           tooltip: {
-            enabled: false, // Disable default tooltip
-            external: function (context:any) {
-              let tooltipEl = document.getElementById('chart-tooltip');
-
-              // Create tooltip if it does not exist
-              if (!tooltipEl) {
-                tooltipEl = document.createElement('div');
-                tooltipEl.id = 'chart-tooltip';
-                tooltipEl.style.position = 'absolute';
-                tooltipEl.style.background = 'white';
-                tooltipEl.style.border = '1px solid rgba(0,0,0,0.1)';
-                tooltipEl.style.borderRadius = '8px';
-                tooltipEl.style.padding = '10px';
-                tooltipEl.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
-                tooltipEl.style.pointerEvents = 'none';
-                tooltipEl.style.transition = 'opacity 0.3s ease';
-                tooltipEl.style.opacity = '0';
-                document.body.appendChild(tooltipEl);
-              }
-
-              // Hide tooltip if no active tooltip items
-              const tooltipModel = context.tooltip;
-              if (tooltipModel.opacity === 0) {
-                tooltipEl.style.opacity = '0';
-                return;
-              }
-
-              // Get tooltip data
-              const dataset =
-                context.chart.data.datasets[
-                  tooltipModel.dataPoints[0].datasetIndex
-                ];
-              const dataPoint = tooltipModel.dataPoints[0];
-              const value = dataPoint.raw;
-              const label = dataPoint.label;
-              const color = dataset.borderColor;
-
-              // Set inner HTML for tooltip (Styled as a card)
-              tooltipEl.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px;  border-radius: 2px;"></div>
-                  <strong>${label}</strong>
-                </div>
-                <div style="margin-top: 6px; color: #555;">Value: <strong>${value}</strong></div>
-              `;
-
-              // Position tooltip
-
-              const canvasRect = context.chart.canvas.getBoundingClientRect();
-              const x = canvasRect.left + tooltipModel.caretX;
-              const y = canvasRect.top + tooltipModel.caretY;
-          
-              tooltipEl.style.left = `${x + 5}px`; // Keep a fixed 5px gap
-              tooltipEl.style.top = `${y - 5}px`; // Move above by 5px
-              tooltipEl.style.opacity = '1';
-            },
+            enabled: false, 
+            external: this.customTooltip
           },
       },
       scales: {
@@ -175,7 +124,7 @@ export class DashboardComponent implements AfterViewInit {
         i === index ? (this.chart.data.datasets[0].data[i] as number) : 0
       );
     } else {
-      this.resetHoveredBar(); // ✅ Reset bars when nothing is hovered
+      this.resetHoveredBar(); 
     }
     this.chart.update();
   }
