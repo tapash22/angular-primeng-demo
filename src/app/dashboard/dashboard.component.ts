@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 // import Chart from 'chart.js/auto';
 // import { Chart, ChartOptions } from 'chart.js';
-import { Chart, ChartConfiguration, ChartOptions, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, ChartOptions, registerables,Plugin } from 'chart.js';
 
 import { ShadowPluginService } from '../service/plugine/shadow-plugin.service';
 
@@ -26,7 +26,7 @@ export class DashboardComponent implements AfterViewInit {
   ];
 
   constructor() {
-    Chart.register(...registerables); 
+    Chart.register(...registerables,this.backgroundColorPlugin); 
   }
 
   ngAfterViewInit() {
@@ -84,6 +84,17 @@ export class DashboardComponent implements AfterViewInit {
       options: this.getChartOptions(),
     });
   }
+
+  backgroundColorPlugin: Plugin = {
+    id: 'customCanvasBackgroundColor',
+    beforeDraw: (chart:any) => {
+      const { ctx, chartArea } = chart;
+      ctx.save();
+      ctx.fillStyle = 'lightgreen'; 
+      ctx.fillRect(chartArea.left, chartArea.top, chartArea.width, chartArea.height);
+      ctx.restore();
+    }
+  };
 
   getChartOptions(): ChartOptions {
     return {
