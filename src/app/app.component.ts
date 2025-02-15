@@ -7,10 +7,11 @@ import { EmployeeService } from './service/employee.service';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ThreescreenComponent } from './threescreen/threescreen.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent],
+  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, ThreescreenComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
