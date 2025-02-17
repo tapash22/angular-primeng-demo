@@ -4,10 +4,17 @@ import { Editor } from 'primeng/editor';
 import { InputTextModule } from 'primeng/inputtext';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { Knob } from 'primeng/knob';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PasswordModule } from 'primeng/password';
+
+interface City {
+  name: string,
+  code: string
+}
 
 @Component({
   selector: 'app-editor',
-  imports: [FormsModule,Editor,InputTextModule,KeyFilterModule,Knob],
+  imports: [FormsModule,Editor,InputTextModule,KeyFilterModule,Knob,MultiSelectModule,PasswordModule],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.css'
 })
@@ -16,9 +23,22 @@ export class EditorComponent implements OnInit,OnDestroy {
   value!: number;
   value1: number = 0;
   interval: any;
+  password! : string;
+
+  
+  cities!: City[];
+
+  selectedCities!: City[];
 
   ngOnInit(): void {
-    this.startAutoIncrement()
+    this.startAutoIncrement();
+    this.cities = [
+      {name: 'New York', code: 'NY'},
+      {name: 'Rome', code: 'RM'},
+      {name: 'London', code: 'LDN'},
+      {name: 'Istanbul', code: 'IST'},
+      {name: 'Paris', code: 'PRS'}
+  ];
   }
 
   startAutoIncrement() {

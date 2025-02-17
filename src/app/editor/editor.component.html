@@ -45,5 +45,12 @@
 
 <div class="card flex justify-center">
     <p-knob [(ngModel)]="value" />
-    <p-knob [(ngModel)]="value1" valueColor="SlateGray" rangeColor="MediumTurquoise" />
+    <!-- <p-knob [(ngModel)]="value1" valueColor="SlateGray" rangeColor="MediumTurquoise" /> -->
+</div>
+
+<div class="card flex justify-center">
+    <p-multiselect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" display="chip" styleClass="w-full md:w-80" />
+</div>
+<div class="card flex justify-center">
+    <p-password [(ngModel)]="password" promptLabel="Choose a password" weakLabel="Too simple" mediumLabel="Average complexity" strongLabel="Complex password" />
 </div>
