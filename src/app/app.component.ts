@@ -9,17 +9,17 @@ import { TableModule } from 'primeng/table';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AutocompletedemoComponent } from './autocompletedemo/autocompletedemo.component';
 import { EditorComponent } from './editor/editor.component';
-// import { ThreescreenComponent } from './threescreen/threescreen.component';
+import { ThreescreenComponent } from './threescreen/threescreen.component';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent],
+  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  title = 'angular-primeng-demo';
+  // title = 'angular-primeng-demo';
 
   employeeList: Employee[] = []
 
