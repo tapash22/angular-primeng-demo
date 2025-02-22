@@ -15,7 +15,7 @@ export class PlanetsComponent implements AfterViewInit, OnDestroy {
   private camera!: THREE.PerspectiveCamera;
   private controls!: OrbitControls;
   private sun!: THREE.Mesh;
-  private planet!: THREE.Mesh; // Reference for Earth
+  private planet!: THREE.Mesh; 
   private planets: any[] = [];
   private animationFrameId!: number;
   private texture!: THREE.Texture;
@@ -79,7 +79,7 @@ export class PlanetsComponent implements AfterViewInit, OnDestroy {
     ];
 
     // Assign Earth for mouse rotation
-    this.planet = this.planets[2].mesh; 
+    this.planet = this.planets[1].mesh; 
 
     // Start animation loop
     this.animate();
