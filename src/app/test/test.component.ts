@@ -18,10 +18,12 @@ export class TestComponent implements AfterViewInit {
   private ambientLight!: THREE.AmbientLight;
   private directionalLight!: THREE.DirectionalLight;
   private pointLight!: THREE.PointLight;
+  private ring!: THREE.Mesh; // Ring mesh
 
   ngAfterViewInit(): void {
     this.initThree();
     this.addLights();
+    this.createRing(); // Add the ring
   }
 
   private initThree() {
@@ -65,7 +67,53 @@ export class TestComponent implements AfterViewInit {
     });
   }
 
-  
+  private createRing() {
+    const geometry = new THREE.TorusGeometry(3, 0.2, 16, 100);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xff4500, // Orange Fire Color
+      transparent: true,
+      emissive: 0xff4500, // Glowing Effect
+      emissiveIntensity: 3, // Increase glow effect
+      opacity: 1,
+    });
+
+    this.ring = new THREE.Mesh(geometry, material);
+
+    // ✅ Rotate it to lie flat
+    this.ring.rotation.x = Math.PI / 2;
+
+    // ✅ Adjust position if needed
+    this.ring.position.set(1, -1.5, 0);
+
+    this.scene.add(this.ring);
+
+    this.startRingAnimation()
+  }
+
+  private startRingAnimation() {
+    let scale = 0.5; // Start small
+    let growing = true; // Flag for growing/shrinking
+
+    const animateRing = () => {
+      if (!this.ring) return;
+
+      if (growing) {
+        scale += 0.002; // Expand the ring
+        (this.ring.material as THREE.MeshStandardMaterial).opacity -= 0.001; // Fade out slowly
+      } else {
+        scale -= 0.002; // Shrink the ring
+        (this.ring.material as THREE.MeshStandardMaterial).opacity -= 0.002; // Fade out faster
+      }
+
+      if (scale >= 1.5) growing = false; // Start shrinking at max size
+      if (scale <= 0.2) this.scene.remove(this.ring); // Remove when too small
+
+      this.ring.scale.set(scale, scale, scale);
+      requestAnimationFrame(animateRing);
+    };
+
+    animateRing();
+  }
 
   private addLights() {
     this.ambientLight = new THREE.AmbientLight(0xffcc00, 0.4);
@@ -168,6 +216,22 @@ export class TestComponent implements AfterViewInit {
     }
     // this.spheres.forEach((sphere) => {
     // });
+
+    if (this.ring) {
+      // Move the ring upwards
+      this.ring.position.y += 0.02;
+
+      // Gradually fade out as it moves up
+      if (this.ring.position.y > 0) {
+        (this.ring.material as THREE.MeshStandardMaterial).opacity -= 0.01;
+      }
+
+      // Reset when the ring disappears
+      if ((this.ring.material as THREE.MeshStandardMaterial).opacity <= 0) {
+        this.ring.position.y = -3; // Reset to the bottom
+        (this.ring.material as THREE.MeshStandardMaterial).opacity = 1;
+      }
+    }
 
     this.renderer.render(this.scene, this.camera);
   };

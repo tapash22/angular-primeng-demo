@@ -12,11 +12,11 @@ import { EditorComponent } from './editor/editor.component';
 import { ThreescreenComponent } from './threescreen/threescreen.component';
 import { PlanetsComponent } from '../assets/planets/planets.component';
 import { TestComponent } from './test/test.component';
-
+import { FireComponent } from './fire/fire.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent,PlanetsComponent,TestComponent],
+  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent,PlanetsComponent,TestComponent,FireComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
