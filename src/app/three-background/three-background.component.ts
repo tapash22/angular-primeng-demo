@@ -58,7 +58,6 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     this.scene = new THREE.Scene();
 
     //material
-    // const material = new THREE.MeshToonMaterial({ color: '"ffeded' });
     const material = new THREE.MeshToonMaterial({ color: '#ffeded' }); 
 
     // mashes
@@ -68,7 +67,7 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     );
     const mesh2 = new THREE.Mesh(new THREE.ConeGeometry(1, 2, 32), material);
     const mesh3 = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(0.8, 0.35, 100, 16),
+      new THREE.TorusKnotGeometry(0.8, 0.35, 100, 2),
       material
     );
 
@@ -97,7 +96,7 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     );
     const particlesMaterial = new THREE.PointsMaterial({
       color: '#ffeded',
-      size: 0.03,
+      size: 0.9,
       sizeAttenuation: true,
     });
     const Particles = new THREE.Points(particlesGeometry, particlesMaterial);
