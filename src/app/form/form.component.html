@@ -1,0 +1,80 @@
+<form (ngSubmit)="submitForm()">
+    <h1> Sign Up </h1>
+
+    <h3>Selected Interests:</h3>
+<ul>
+    <li *ngFor="let interest of userObj.interest">{{ interest }}</li>
+</ul>
+
+    <fieldset>
+
+        <legend><span class="number">1</span> Your Basic Info</legend>
+
+        <label for="name">Name:</label>
+        <input type="text" required id="name" #name="ngModel" [(ngModel)]="userObj.name" name="name">
+        <!-- using for show rules with error -->
+        @if(name.errors?.['required'] && name.touched){
+            <span>needed</span>
+        }
+
+        <label for="email">Email:</label>
+        <input type="email" id="mail" [(ngModel)]="userObj.email" name="email">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" [(ngModel)]="userObj.password"
+            name="user_password">
+
+        <label>Age:</label>
+        <div *ngFor="let age of ageLimit">
+            <input type="radio" [id]="age.title" [value]="age.title" name="age"
+                [(ngModel)]="userObj.age">
+            <label [for]="age.title" class="light">{{ age.value < 14 ?
+                'Under 13' : 'Over 13' }}</label>
+            <br>
+        </div>
+
+    </fieldset>
+    <fieldset>
+
+        <legend><span class="number">2</span> Your Profile</legend>
+
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio" [(ngModel)]="userObj.bio"></textarea>
+
+        <label for="job">Job Role:</label>
+        <select id="job" name="jobRole" [(ngModel)]="userObj.jobRole">
+            <optgroup label="Web">
+                <option value="frontend_developer">Front-End Developer</option>
+                <option value="php_developer">PHP Developer</option>
+                <option value="python_developer">Python Developer</option>
+                <option value="rails_developer">Rails Developer</option>
+                <option value="web_designer">Web Designer</option>
+                <option value="wordpress_developer">Wordpress Developer</option>
+            </optgroup>
+            <optgroup label="Mobile">
+                <option value="android_developer">Android Developer</option>
+                <option value="ios_developer">IOS Developer</option>
+                <option value="mobile_designer">Mobile Designer</option>
+            </optgroup>
+            <optgroup label="Business">
+                <option value="business_owner">Business Owner</option>
+                <option value="freelancer">Freelancer</option>
+            </optgroup>
+        </select>
+
+        <div *ngFor="let interest of interests">
+            <input 
+              type="checkbox" 
+              [id]="interest.value" 
+              [value]="interest.value"
+              (change)="onCheckboxChange($event, interest.value)"
+              [checked]="userObj.interest.includes(interest.value)">
+            <label class="light" [for]="interest.value">{{ interest.title }}</label>
+            <br>
+        </div>
+
+    </fieldset>
+
+    <button type="submit">Sign Up</button>
+
+</form>

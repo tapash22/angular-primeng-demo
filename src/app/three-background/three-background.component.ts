@@ -57,18 +57,35 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     // screen
     this.scene = new THREE.Scene();
 
-    //material
-    const material = new THREE.MeshToonMaterial({ color: '#ffeded' }); 
+      // Load Background Texture
+  const textureLoader = new THREE.TextureLoader();
+  const backgroundTexture = textureLoader.load('images/stars.jpg'); // Set the correct path
+  this.scene.background = backgroundTexture; // Apply background texture to the scene
 
-    // mashes
+    // Load Textures
+    // const textureLoader = new THREE.TextureLoader();
+    const texture1 = textureLoader.load('images/neptune.jpg'); // Image for Mesh 1
+    const texture2 = textureLoader.load('images/pluto.jpg'); // Image for Mesh 2
+    const texture3 = textureLoader.load('images/sun.jpg'); // Image for Mesh 3
+    
+
+    // Create materials with different textures
+    const material1 = new THREE.MeshStandardMaterial({ map: texture1 });
+    const material2 = new THREE.MeshStandardMaterial({ map: texture2 });
+    const material3 = new THREE.MeshStandardMaterial({ map: texture3 });
+
+    //material
+    const material = new THREE.MeshToonMaterial({ color: '#ffeded' });
+
+    // Create Meshes
     const mesh1 = new THREE.Mesh(
       new THREE.TorusGeometry(1, 0.4, 16, 60),
-      material
+      material1
     );
-    const mesh2 = new THREE.Mesh(new THREE.ConeGeometry(1, 2, 32), material);
+    const mesh2 = new THREE.Mesh(new THREE.ConeGeometry(1, 2, 42), material2);
     const mesh3 = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(0.8, 0.35, 100, 2),
-      material
+      new THREE.TorusKnotGeometry(0.8, 0.35, 100, 16),
+      material3
     );
 
     mesh1.position.set(2, 0, 0);
@@ -79,28 +96,28 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     this.scene.add(mesh1, mesh2, mesh3);
 
     // Particles
-    const particlesCount = 200;
-    const positions = new Float32Array(particlesCount * 3);
-    for (let i = 0; i < particlesCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 10;
-      positions[i * 3 + 1] =
-        this.objectsDistance * 0.5 -
-        Math.random() * this.objectsDistance * this.sectionMeshes.length;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-    }
+    // const particlesCount = 200;
+    // const positions = new Float32Array(particlesCount * 3);
+    // for (let i = 0; i < particlesCount; i++) {
+    //   positions[i * 3] = (Math.random() - 0.5) * 10;
+    //   positions[i * 3 + 1] =
+    //     this.objectsDistance * 0.5 -
+    //     Math.random() * this.objectsDistance * this.sectionMeshes.length;
+    //   positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    // }
 
-    const particlesGeometry = new THREE.BufferGeometry();
-    particlesGeometry.setAttribute(
-      'position',
-      new THREE.BufferAttribute(positions, 3)
-    );
-    const particlesMaterial = new THREE.PointsMaterial({
-      color: '#ffeded',
-      size: 0.9,
-      sizeAttenuation: true,
-    });
-    const Particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    this.scene.add(Particles);
+    // const particlesGeometry = new THREE.BufferGeometry();
+    // particlesGeometry.setAttribute(
+    //   'position',
+    //   new THREE.BufferAttribute(positions, 3)
+    // );
+    // const particlesMaterial = new THREE.PointsMaterial({
+    //   color: '#ffeded',
+    //   size: 0.1,
+    //   sizeAttenuation: true,
+    // });
+    // const Particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    // this.scene.add(Particles);
 
     //lights
     const directionalLight = new THREE.DirectionalLight('#ffffff', 1);
@@ -111,8 +128,8 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     this.camera = new THREE.PerspectiveCamera(
       35,
       window.innerWidth / window.innerHeight,
-      0.1,
-      1000
+      0.9,
+      100
     );
     this.camera.position.z = 6;
     this.cameraGroup.add(this.camera);
@@ -128,26 +145,29 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     const elapsedTime = this.clock.getElapsedTime();
     const deltaTime = elapsedTime - this.previousTime;
     this.previousTime = elapsedTime;
-  
+
     // Scroll effect: Move camera based on scroll
-    this.camera.position.y = -this.scrollY / window.innerHeight * this.objectsDistance;
-  
+    this.camera.position.y =
+      (-this.scrollY / window.innerHeight) * this.objectsDistance;
+
     // Parallax effect (Mouse movement)
     const parallaxX = this.cursor.x * 0.5;
     const parallaxY = -this.cursor.y * 0.5;
-    this.cameraGroup.position.x += (parallaxX - this.cameraGroup.position.x) * 5 * deltaTime;
-    this.cameraGroup.position.y += (parallaxY - this.cameraGroup.position.y) * 5 * deltaTime;
-  
+    this.cameraGroup.position.x +=
+      (parallaxX - this.cameraGroup.position.x) * 7 * deltaTime;
+    this.cameraGroup.position.y +=
+      (parallaxY - this.cameraGroup.position.y) * 7 * deltaTime;
+
     // Animate meshes
-    this.sectionMeshes.forEach(mesh => {
-      mesh.rotation.x += deltaTime * 0.1;
+    this.sectionMeshes.forEach((mesh) => {
+      mesh.rotation.x += deltaTime * 0.5;
       mesh.rotation.y += deltaTime * 0.12;
     });
-  
+
     this.renderer.render(this.scene, this.camera);
     this.animationFrameId = requestAnimationFrame(() => this.animate()); // Ensure animation loop continues
   }
-  
+
   private onResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
@@ -157,17 +177,17 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
   private onScroll() {
     this.scrollY = window.scrollY;
     const newSection = Math.round(this.scrollY / window.innerHeight);
-  
+
     if (newSection !== this.currentSection) {
       this.currentSection = newSection;
       gsap.to(this.sectionMeshes[this.currentSection]?.rotation, {
         duration: 1.5,
         ease: 'power2.inOut',
         x: '+=6',
-        y: '+=3'
+        y: '+=3',
       });
     }
-  
+
     // Force re-render after scroll change
     this.animate();
   }
@@ -176,5 +196,4 @@ export class ThreeBackgroundComponent implements AfterViewInit, OnDestroy {
     this.cursor.x = event.clientX / window.innerWidth - 0.5;
     this.cursor.y = event.clientY / window.innerHeight - 0.5;
   }
-
 }
