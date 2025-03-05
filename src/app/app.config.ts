@@ -5,6 +5,8 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideStore } from '@ngrx/store';
+import { counterReducer } from './store/counter.reducer';
 
 
 export const appConfig: ApplicationConfig = {
@@ -12,7 +14,9 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    provideAnimationsAsync(),  // Added here
+    provideAnimationsAsync(),
+    provideStore({counter: counterReducer}), 
+     // Added here
     providePrimeNG({
       theme: {
         preset: Aura

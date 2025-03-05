@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectCounter } from '../store/counter.selectors';
+import { decrement, increment, reset } from '../store/counter.actions';
 
 @Component({
   selector: 'app-form',
@@ -9,6 +13,24 @@ import { CommonModule } from '@angular/common';
   styleUrl: './form.component.css',
 })
 export class FormComponent {
+
+  counter$ : Observable<number>
+
+  constructor(private store: Store){
+    this.counter$ = this.store.select(selectCounter)
+  }
+
+  increment() {
+    this.store.dispatch(increment());
+  }
+
+  decrement() {
+    this.store.dispatch(decrement());
+  }
+
+  reset() {
+    this.store.dispatch(reset());
+  }
   ageLimit: any = [
     {
       title: 'under_13',

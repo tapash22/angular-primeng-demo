@@ -2,19 +2,20 @@
     <h1> Sign Up </h1>
 
     <h3>Selected Interests:</h3>
-<ul>
-    <li *ngFor="let interest of userObj.interest">{{ interest }}</li>
-</ul>
+    <ul>
+        <li *ngFor="let interest of userObj.interest">{{ interest }}</li>
+    </ul>
 
     <fieldset>
 
         <legend><span class="number">1</span> Your Basic Info</legend>
 
         <label for="name">Name:</label>
-        <input type="text" required id="name" #name="ngModel" [(ngModel)]="userObj.name" name="name">
+        <input type="text" required id="name" #name="ngModel"
+            [(ngModel)]="userObj.name" name="name">
         <!-- using for show rules with error -->
         @if(name.errors?.['required'] && name.touched){
-            <span>needed</span>
+        <span>needed</span>
         }
 
         <label for="email">Email:</label>
@@ -63,13 +64,14 @@
         </select>
 
         <div *ngFor="let interest of interests">
-            <input 
-              type="checkbox" 
-              [id]="interest.value" 
-              [value]="interest.value"
-              (change)="onCheckboxChange($event, interest.value)"
-              [checked]="userObj.interest.includes(interest.value)">
-            <label class="light" [for]="interest.value">{{ interest.title }}</label>
+            <input
+                type="checkbox"
+                [id]="interest.value"
+                [value]="interest.value"
+                (change)="onCheckboxChange($event, interest.value)"
+                [checked]="userObj.interest.includes(interest.value)">
+            <label class="light" [for]="interest.value">{{ interest.title
+                }}</label>
             <br>
         </div>
 
@@ -78,3 +80,12 @@
     <button type="submit">Sign Up</button>
 
 </form>
+
+<div>
+    <div style="text-align: center; margin-top: 50px;">
+        <h1>Counter: {{ counter$ | async }}</h1>
+        <button (click)="increment()">Increment</button>
+        <button (click)="decrement()">Decrement</button>
+        <button (click)="reset()">Reset</button>
+      </div>
+</div>
