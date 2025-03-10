@@ -11,7 +11,23 @@
   <app-dashboard></app-dashboard>
 </div> -->
 <!-- <app-three-background></app-three-background> -->
-<app-form></app-form>
+<!-- <app-form></app-form> -->
+<app-form (formSubmitted)="handleFormSubmit($event)"></app-form>
+
+<!-- Display received form data -->
+<div *ngFor="let receivedData of receivedDatas">
+  <h3>Received Form Data:</h3>
+  <p><strong>ID:</strong> {{ receivedData.id }}</p>
+  <p><strong>Name:</strong> {{ receivedData.name }}</p>
+  <p><strong>Email:</strong> {{ receivedData.email }}</p>
+  <p><strong>Age:</strong> {{ receivedData.age }}</p>
+  <p><strong>Bio:</strong> {{ receivedData.bio }}</p>
+  <p><strong>Job Role:</strong> {{ receivedData.jobRole }}</p>
+  <p><strong>Interests:</strong> {{ receivedData.interest?.join(', ') }}</p>
+</div>
+<!-- <app-user></app-user> -->
+<!-- <app-user-form></app-user-form> -->
+ <!-- <app-parent></app-parent> -->
 <!-- <div>
   <img src="images/earth.jpg" alt="Sun Texture" />
   Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nam voluptas

@@ -7,6 +7,10 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { counterReducer } from './store/counter.reducer';
+import { userReducer } from './store/demo/user.reducer';
+import { provideEffects } from '@ngrx/effects';
+
+// import { UserEffects } from './store/demo/user.effects';
 
 
 export const appConfig: ApplicationConfig = {
@@ -15,12 +19,15 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideAnimationsAsync(),
-    provideStore({counter: counterReducer}), 
-     // Added here
+    provideStore({ counter: counterReducer, user:userReducer }),
+    provideEffects(),  
+    // Added here
     providePrimeNG({
-      theme: {
-        preset: Aura
-      }
-    })  // Added here
-  ]
+        theme: {
+            preset: Aura
+        }
+    }) // Added here
+    ,
+    provideEffects()
+]
 };

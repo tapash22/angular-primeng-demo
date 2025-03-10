@@ -1,0 +1,10 @@
+<form (ngSubmit)="submitForm()" #userForm="ngForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" [(ngModel)]="formData.name" name="name" required />
+  
+    <label for="password">Password:</label>
+    <input type="password" id="password" [(ngModel)]="formData.password" name="password" required />
+  
+    <button type="submit" [disabled]="userForm.invalid">Submit</button>
+  </form>
+  

@@ -1,0 +1,11 @@
+<h2>Parent Component</h2>
+
+<!-- Child Component -->
+<app-child (formSubmitted)="handleFormSubmit($event)"></app-child>
+
+<!-- Display received form data -->
+<div *ngIf="receivedData">
+  <h3>Form Data from Child:</h3>
+  <p><strong>Name:</strong> {{ receivedData.name }}</p>
+  <p><strong>Password:</strong> {{ receivedData.password }}</p>
+</div>

@@ -15,28 +15,44 @@ import { TestComponent } from './test/test.component';
 import { FireComponent } from './fire/fire.component';
 import { ThreeBackgroundComponent } from './three-background/three-background.component';
 import { FormComponent } from './form/form.component';
+import { UserComponent } from './user/user.component';
+import { UserFormComponent } from './user-form/user-form.component';
+import { ParentComponent } from './parent/parent.component';
+
+// import { FormComponent } from './form/form.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent,PlanetsComponent,TestComponent,FireComponent,ThreeBackgroundComponent,FormComponent],
+  imports: [CommonModule,ParentComponent,RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent,PlanetsComponent,TestComponent,FireComponent,ThreeBackgroundComponent,FormComponent,UserComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent  {
   // title = 'angular-primeng-demo';
 
   employeeList: Employee[] = []
 
   constructor(private empService: EmployeeService){}
 
-  
-  ngOnInit(): void {
-    this.getEmployes();
+  receivedDatas: any[] = []; // Store received form data
+
+  handleFormSubmit(formData: any) {
+    console.log('Received Data in Parent:', formData);
+    const newData = {
+      ...formData,
+      id: Date.now()
+    }
+    this.receivedDatas.push(newData)
   }
 
-  getEmployes(){
-    this.empService.getEmployees().subscribe((res:any)=>{
-      this.employeeList = res
-    })
-  }
+  
+  // ngOnInit(): void {
+  //   this.getEmployes();
+  // }
+
+  // getEmployes(){
+  //   this.empService.getEmployees().subscribe((res:any)=>{
+  //     this.employeeList = res
+  //   })
+  // }
 }

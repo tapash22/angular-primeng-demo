@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
@@ -13,6 +13,7 @@ import { decrement, increment, reset } from '../store/counter.actions';
   styleUrl: './form.component.css',
 })
 export class FormComponent {
+  @Output() formSubmitted = new EventEmitter<any>(); 
 
   counter$ : Observable<number>
 
@@ -71,5 +72,6 @@ export class FormComponent {
 
   submitForm() {
     console.log('Selected Interests:', this.userObj);
+    this.formSubmitted.emit(this.userObj);
   }
 }
