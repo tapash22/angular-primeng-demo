@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
@@ -13,7 +13,9 @@ import { decrement, increment, reset } from '../store/counter.actions';
   styleUrl: './form.component.css',
 })
 export class FormComponent {
+  @Input() userObj: any
   @Output() formSubmitted = new EventEmitter<any>(); 
+
 
   counter$ : Observable<number>
 
@@ -51,16 +53,7 @@ export class FormComponent {
     { title: 'Business', value: 'interest_business' }
   ];
 
-  userObj: any = {
-    name: '',
-    email: '',
-    password: '',
-    age: '',
-    bio: '',
-    jobRole: '',
-    interest: [] as string[],
 
-  };
 
   onCheckboxChange(event: any, value: string) {
     if (event.target.checked) {

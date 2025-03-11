@@ -32,6 +32,17 @@ export class AppComponent  {
 
   employeeList: Employee[] = []
 
+  userObj: any = {
+    name: '',
+    email: '',
+    password: '',
+    age: '',
+    bio: '',
+    jobRole: '',
+    interest: [] as string[],
+
+  };
+
   constructor(private empService: EmployeeService){}
 
   receivedDatas: any[] = []; // Store received form data
