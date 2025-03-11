@@ -1,0 +1,6 @@
+<button (click)="toggleVisibility()">Toggle Element</button>
+
+<!-- Element with ngClass and animation trigger -->
+<div [ngClass]="{ 'hidden': !isVisible, 'visible': isVisible }" [@scaleUp]="isVisible ? 'visible' : 'hidden'" class="box">
+  Smooth Animated Content
+</div>

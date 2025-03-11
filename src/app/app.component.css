@@ -46,3 +46,30 @@
     box-shadow: 2px 2px 5px blue;
   }
   
+
+  .navbar {
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 10px;
+    z-index: 1000;
+  }
+  
+  .navbar nav a {
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .navbar nav a.active {
+    background-color: #575757;
+  }
+  
+  /* Padding for the page content to avoid overlap with the fixed navbar */
+  div[router-outlet] {
+    margin-top: 60px; /* Adjust based on navbar height */
+  }
+  

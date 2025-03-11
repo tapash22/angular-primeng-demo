@@ -12,12 +12,12 @@
 </div> -->
 <!-- <app-three-background></app-three-background> -->
 <!-- <app-form></app-form> -->
- <div style="display: flex; justify-content: center; width: 100%; height: 100%; align-items: start; background: red;">
+ <!-- <div style="display: flex; justify-content: center; width: 100%; height: 100%; align-items: start; background: red;">
 
    <app-form [userObj]="userObj" (formSubmitted)="handleFormSubmit($event)"></app-form>
    
    <!-- Display received form data -->
-<div style="display: block; width: 100%; height: 100%; padding: 20px;">
+<!-- <div style="display: block; width: 100%; height: 100%; padding: 20px;">
   <h2>List of Data</h2>
   <div style="width: 100%; display: flex;justify-content: space-evenly;align-items: center;">
 
@@ -32,7 +32,8 @@
     </div>
   </div>
 </div>
- </div>
+<app-animation-ex></app-animation-ex>
+ </div>  -->
 <!-- <app-user></app-user> -->
 <!-- <app-user-form></app-user-form> -->
  <!-- <app-parent></app-parent> -->
@@ -103,5 +104,15 @@
 <div>
   <app-editor></app-editor>
 </div> -->
+<div class="navbar">
+  <nav>
+    <a (click)="navigateToHome()">Home</a>
+    <a (click)="navigateToAbout()">About</a>
+  </nav>
+</div>
 
-<router-outlet />
+<div [@routeAnimation]="getRouterOutletState(outlet)">
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>
+
+

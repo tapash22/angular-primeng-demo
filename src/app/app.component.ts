@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ImageModule } from 'primeng/image';
 import { Employee } from './model/Employee';
@@ -18,14 +18,23 @@ import { FormComponent } from './form/form.component';
 import { UserComponent } from './user/user.component';
 import { UserFormComponent } from './user-form/user-form.component';
 import { ParentComponent } from './parent/parent.component';
-
+import { AnimationExComponent } from './animation-ex/animation-ex.component';
+import { animate, style, transition, trigger } from '@angular/animations';
 // import { FormComponent } from './form/form.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule,ParentComponent,RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent,PlanetsComponent,TestComponent,FireComponent,ThreeBackgroundComponent,FormComponent,UserComponent],
+  imports: [AnimationExComponent,CommonModule,ParentComponent,RouterOutlet,TableModule,ButtonModule,ImageModule, DashboardComponent, AutocompletedemoComponent,EditorComponent,ThreescreenComponent,PlanetsComponent,TestComponent,FireComponent,ThreeBackgroundComponent,FormComponent,UserComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
+  animations: [
+    trigger('routeAnimation', [
+      transition('* <=> *', [
+        style({ opacity: 0 }),
+        animate('0.5s', style({ opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class AppComponent  {
   // title = 'angular-primeng-demo';
@@ -43,7 +52,7 @@ export class AppComponent  {
 
   };
 
-  constructor(private empService: EmployeeService){}
+  constructor(private empService: EmployeeService,private router: Router){}
 
   receivedDatas: any[] = []; // Store received form data
 
@@ -56,6 +65,24 @@ export class AppComponent  {
     this.receivedDatas.push(newData)
   }
 
+  
+
+  getRouterOutletState(outlet:RouterOutlet) {
+    console.log("output daata", outlet)
+    return outlet?.activatedRouteData?.['animation'];
+  }
+  click(){
+    console.log("click")
+  }
+  // constructor() {}
+
+  navigateToHome() {
+    this.router.navigate(['/home']);
+  }
+
+  navigateToAbout() {
+    this.router.navigate(['/about']);
+  }
   
   // ngOnInit(): void {
   //   this.getEmployes();
